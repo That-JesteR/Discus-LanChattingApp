@@ -1,7 +1,6 @@
 import sqlite3
 from fastapi import FastAPI,HTTPException,status,Header,WebSocket,WebSocketDisconnect,WebSocketException,Body,File,UploadFile,Form,Request
 from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel
 import uvicorn
 import secrets
 import bcrypt  

@@ -70,7 +70,6 @@ class CreateWindow(pyside.QMainWindow):
             "Token":None,
             "Socket":None
         }
-        # default pic is https://iili.io/nzAOFje.png
         self.Friends = [] #list for friends [id,name]
         self.FriendInfo = [] #list for friends info [id,banner,bio,icon,etc]
         self.FriendRequests = [] #list with the name of the one u sending the request to
@@ -101,9 +100,12 @@ class CreateWindow(pyside.QMainWindow):
         self.GG = 0
         self.BB = 255
         #
-        self.TargetIP = "192.168.1.145"
+
+        with open("config.json", "r") as file:
+            IPDetails = json.load(file)
+            IP = IPDetails.get("TargetIP")
+        self.TargetIP = IP
         #self.TargetIP = "10.0.3.218"
-        #self.IconFolder = "C:/Users/Frantzesk/Documents/Python/API ENDPOINT WITH DB/Icons/"
         self.IconFolder = "Icons/"
         #
         self.SoundPlayer = QSoundEffect()
@@ -115,9 +117,6 @@ class CreateWindow(pyside.QMainWindow):
         self.Loading = False
         self.SavedUSIB = True
         #
-        # self.UnreadTimer = QTimer(self)
-        # self.UnreadTimer.setInterval(10000)
-        # self.UnreadTimer.setSingleShot(True)
         #
         self.Main = pyside.QWidget()
         self.Main.setStyleSheet("background-color: rgb(30,30,30); outline: none;")

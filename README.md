@@ -4,13 +4,13 @@ A basic copy of discord i made using python, this project is for showcasing only
 
 The project makes use of:
 
-• Sqlite3 as the database.
-• Fast API and Requests for the api.
-• Bcrypt and Cryptography for the hashing and Encryption.
-• Pyside6 for all the window and GUI work.
-• websockets for the real time communication between client server such as notification and friend messages.
-• Qasync and Asyncio for making the code run asyncronously and prevent GUI freezing.
-• Other libraries such as PIL,datetime,io,os,base64,string
+- Sqlite3 as the database.
+- Fast API and Requests for the api.
+- Bcrypt and Cryptography for the hashing and Encryption.
+- Pyside6 for all the window and GUI work.
+- websockets for the real time communication between client server such as notification and friend messages.
+- Qasync and Asyncio for making the code run asyncronously and prevent GUI freezing.
+- Other libraries such as PIL,datetime,io,os,base64,string
 
 How to use:
 

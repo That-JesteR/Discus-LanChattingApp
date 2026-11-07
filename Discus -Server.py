@@ -1,6 +1,7 @@
 import sqlite3
 from fastapi import FastAPI,HTTPException,status,Header,WebSocket,WebSocketDisconnect,WebSocketException,Body,File,UploadFile,Form,Request
 from fastapi.encoders import jsonable_encoder
+from pydantic import BaseModel
 import uvicorn
 import secrets
 import bcrypt  
@@ -94,7 +95,7 @@ async def WebSocket(Websocket: WebSocket, Token: str, Id: int):
         while True:
             data = await Websocket.receive_text()
             data = json.loads(data)
-            print(data,flush=True)
+            #print(data,flush=True)
             print(f"whole is :{ActiveUsers}",flush=True)
             if data.get("Type") == "Message":
                 if AreFriends(Id,data.get("Recipient")):
@@ -148,7 +149,7 @@ async def WebSocket(Websocket: WebSocket, Token: str, Id: int):
                     DeleteUnread(Id,data.get("Recipient"))
 
             elif data.get("Type") == "Disconnect":
-                print(data,flush=True)
+                #print(data,flush=True)
                 UUID = int(data.get("Sender"))
                 print(f"the particular is :{ActiveUsers[UUID]}",flush=True)
                 print(f"whole is :{ActiveUsers}",flush=True)
@@ -372,11 +373,11 @@ def CheckSessionToken(Id,Token):
             database.close()
             return(True)
         else:
-            print("token was wrong",flush=True)
+            #print("token was wrong",flush=True)
             if AT is not None:
                 cursor.execute("SELECT AuthToken FROM Users WHERE ID = ?",(int(Id),))
                 token =  cursor.fetchone()
-                print(f"token[0] == AT: {token[0] == AT:} 1:{token[0]} 2:{AT}")
+                #print(f"token[0] == AT: {token[0] == AT:} 1:{token[0]} 2:{AT}")
                 if token[0] == AT:
                     try:
                         cursor.execute("INSERT INTO Active (UserID,SessionToken) VALUES (?,?)",(int(Id),ST))
@@ -394,7 +395,7 @@ def CheckSessionToken(Id,Token):
                 return(False)
     except Exception as e:
         database.close()
-        print(f"session token: {e}",flush=True)
+        #print(f"session token: {e}",flush=True)
 
 def AlrdInSession(Id):
     database = sqlite3.connect(Directory + "Discus.db")
@@ -426,7 +427,7 @@ async def SetUsersUnread(request: Request):
     for Unread in UnreadChats:
         #Unread = json.loads(Unread)
         setUnread(Unread.get("Sender"),Unread.get("Recipient"),Unread.get("Timestamp"),Unread.get("Number"))
-    print(f"i got the unread: {UnreadChats}",flush=True)
+    #print(f"i got the unread: {UnreadChats}",flush=True)
 
 def setUnread(Id1,Id2,Timestamp,Num = None):
     #Id1 is for the recipient
@@ -489,21 +490,23 @@ async def Unfriend(ID1: int = Body(...), ID2: int = Body(...)):
             print("they are friends yes",flush=True)
             cursor.execute("UPDATE Friends SET Status = ? WHERE User1 = ? AND User2 = ? OR User1 = ? AND User2 = ?",("Deleted",ID1,ID2,ID2,ID1))
             database.commit()
-            print(f"Active Users: {ActiveUsers} aaa",flush=True)
+            #print(f"Active Users: {ActiveUsers} aaa",flush=True)
             try:
-                print(f"ID1: {ID1}",flush=True)
-                print(f"ID2: {ID2}",flush=True)
+                #print(f"ID1: {ID1}",flush=True)
+                #print(f"ID2: {ID2}",flush=True)
                 for client in ActiveUsers.get(ID1):
-                    print(f"The client is {ID1}",flush=True)
+                    #print(f"The client is {ID1}",flush=True)
                     await client.send_json({"Id":ID2,"Type": "FriendDeleted"})
             except Exception as e:
-                print(f"1: {e}",flush=True)
+                pass
+                #print(f"1: {e}",flush=True)
             try:
                 for client in ActiveUsers.get(ID2):
-                    print(f"The client is {ID2}",flush=True)
+                    #print(f"The client is {ID2}",flush=True)
                     await client.send_json({"Id":ID1,"Type": "FriendDeleted"})
             except Exception as e:
-                print(f"2: {e}",flush=True)
+                #print(f"2: {e}",flush=True)
+                pass
         else:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail=f"You are not friends with the user")
         database.close()
@@ -673,7 +676,7 @@ def RetrieveFriends(ID: int = Header(...)):
 def RetrieveStatus(Group: list = Body(...)):
     Group2 = {}
     try:
-        database = sqlite3.connect("API ENDPOINT WITH DB/Discus.db")
+        database = sqlite3.connect(Directory + "Discus.db")
         cursor = database.cursor()
         for x in Group:
             cursor.execute("SELECT UserID FROM Active WHERE UserID = ?",(x,))
@@ -682,11 +685,14 @@ def RetrieveStatus(Group: list = Body(...)):
                 Group2[x] = "Online"
             else:
                 Group2[x] = "Offline"
-        database.close()
+        try:
+            database.close()
+        except:
+            pass
         return{"Group":Group2}
     except Exception as e:
         database.close()
-        raise HTTPException(status.HTTP_408_REQUEST_TIMEOUT,detail=e)
+        raise HTTPException(status.HTTP_408_REQUEST_TIMEOUT,detail=f"{e}")
 
 
 
@@ -778,7 +784,6 @@ async def ChangeIcon(Id: int = Form(...), Image: UploadFile = File(...), Token: 
             #the most tiring thing i did bro
             response = requests.post("https://freeimage.host/api/1/upload",data={"key":"6d207e02198a847aa98d0a2a901485a5","action": "upload","format": "json"},files={"source": (Image.filename, Bytes,Image.content_type)})
             if response.status_code == 200:
-                print(response.status_code,flush=True)
                 PublicUrl = response.json()["image"]["url"]
                 try:
                     database = sqlite3.connect(Directory + "Discus.db")
@@ -795,8 +800,6 @@ async def ChangeIcon(Id: int = Form(...), Image: UploadFile = File(...), Token: 
                     database.close()
                     raise HTTPException(status.HTTP_408_REQUEST_TIMEOUT,detail="An error occured")
             else:
-                print(response.status_code,flush=True)
-                print(response.json(),flush=True)
                 raise HTTPException(status.HTTP_408_REQUEST_TIMEOUT,detail="Upload Failed")
         except Exception as e:
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT,detail=f"{e}")
@@ -920,7 +923,6 @@ def LogIn(Username:str = Header(...), Password: str = Header(...)):
     cursor.execute("SELECT Password,ID FROM Users WHERE Username = ?",(Username,))
     match = cursor.fetchone()
     if match is None:
-        print(1,flush=True)
         raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid username or password"
@@ -959,20 +961,17 @@ def LogIn(Username:str = Header(...), Password: str = Header(...)):
             except Exception as e:
                 database.rollback()
                 database.close()
-                print(2,flush=True)
                 raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail= "Failed to Authorize")
             finally:
                 AuthToken = None
                 ID = None
         else:
-            print(3,flush=True)
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid username or password"
             )
     except Exception as e:
         print(e,flush=True)
-        print(4,flush=True)
         e = traceback.format_exc()
         raise HTTPException(status.HTTP_401_UNAUTHORIZED,detail="Invalid username or password")
 

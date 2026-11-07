@@ -1,7 +1,6 @@
 import sqlite3
 from fastapi import FastAPI,HTTPException,status,Header,WebSocket,WebSocketDisconnect,WebSocketException,Body,File,UploadFile,Form,Request
 from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel
 import uvicorn
 import secrets
 import bcrypt  
@@ -656,13 +655,6 @@ def RetrieveFriends(ID: int = Header(...)):
                 Unread = RetrieveUnread(ID,friends[0])
             NonRead.append(Unread)
         database.close()
-        # print(f"Data: {Data}",flush=True)
-        # print(f"Friends: {Friends}",flush=True)
-        # print(f"PendingSent: {PendingSent}",flush=True)
-        # print(f"PendingReceived: {PendingReceived}",flush=True)
-        # print(f"NonRead: {NonRead}",flush=True)
-        # print(f"LastTimestamps: {LastTimestamps}",flush=True)
-        # print(f"Unread {Unread}",flush=True)
         return{
             "Friends":Friends,
             "PendingSent":PendingSent,

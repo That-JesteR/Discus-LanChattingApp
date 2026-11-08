@@ -12,9 +12,10 @@ The project makes use of:
 - Qasync and Asyncio for making the code run asyncronously and prevent GUI freezing.
 - Other libraries such as PIL,datetime,io,os,base64,string
 
+For a more convinient set-up 2 .exe's are provided on the Release tab: 
 How to use:
 
-  - 1.First the "Discus - Server.exe" needs to be hosted somewhere,a user can use a device to host the server on by running it.
-  - 2.Now for the client "Discus - Client.exe" to connect to the server the IP in the .json file must corespond to the IP adress of the device that is hosting the server.
-  - 3.Once everything is set correctly the app should work as intended,make sure that the icons folder is on the same directory or folder as the running .exe and the .json or the icon wont show up.
+  - 1.The server "Discus - Server.exe" needs to be hosted somewhere,a user can use a device to host the server on by running it.
+  - 2.For the client "Discus - Client.exe" to connect to the server, the IP in the "config.json" file must corespond to the IP adress of the device that is hosting the server.
+  - 3.Once everything is set correctly the app should work as intended,make sure that the icons folder is on the same directory or folder as the running .exe and the "config.json" or the icon wont show up.
   - 4.All good to go.

@@ -12,7 +12,7 @@ The project makes use of:
 - Qasync and Asyncio for making the code run asyncronously and prevent GUI freezing.
 - Other libraries such as PIL,datetime,io,os,base64,string
 
-For a more convinient set-up 2 .exe's are provided on the Release tab: 
+For a more convinient set-up 2 .exe's are provided on the Release tab: https://github.com/That-JesteR/Discus-LanChattingApp/releases/tag/v1.0.0
 How to use:
 
   - 1.The server "Discus - Server.exe" needs to be hosted somewhere,a user can use a device to host the server on by running it.
